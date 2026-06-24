@@ -38,6 +38,9 @@ class MouseController:
         # Drag state
         self._is_dragging = False
         self._fist_frame_count = 0
+        
+        # Scroll state
+        self._scroll_accumulator = 0.0
 
         # Previous gesture for edge transitions
         self._prev_gesture = Gesture.NONE
@@ -108,13 +111,18 @@ class MouseController:
                 pyautogui.moveTo(int(sx), int(sy), _pause=False)
 
         elif gesture == Gesture.SCROLL:
-            # Scroll based on vertical hand movement
-            if abs(scroll_delta) > config.SCROLL_Y_THRESHOLD:
-                # Negative delta = hand moved up = scroll up (positive scroll value)
-                scroll_amount = int(-scroll_delta * config.SCROLL_SENSITIVITY * 100)
-                scroll_amount = max(-15, min(15, scroll_amount))  # Clamp
-                if scroll_amount != 0:
-                    pyautogui.scroll(scroll_amount, _pause=False)
+            # Freeze cursor position while scrolling
+            # Accumulate the vertical hand movement
+            self._scroll_accumulator += scroll_delta
+            
+            if abs(self._scroll_accumulator) > config.SCROLL_Y_THRESHOLD:
+                # Negative delta = hand moved up = scroll up
+                direction = 1 if self._scroll_accumulator < 0 else -1
+                
+                pyautogui.scroll(direction * config.SCROLL_AMOUNT, _pause=False)
+                
+                # Reset accumulator after triggering a scroll tick
+                self._scroll_accumulator = 0.0
 
         elif gesture == Gesture.IDLE:
             # Open palm — do nothing, cursor stays put
@@ -131,6 +139,9 @@ class MouseController:
         # Reset smoother on certain transitions for snappier response
         if old_gesture == Gesture.NONE and new_gesture != Gesture.NONE:
             self._smoother.reset()
+            
+        if old_gesture == Gesture.SCROLL:
+            self._scroll_accumulator = 0.0
 
     def _landmark_to_screen(self, landmarks) -> tuple[float, float]:
         """

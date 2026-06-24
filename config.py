@@ -22,9 +22,9 @@ RIGHT_CLICK_THRESHOLD = 0.025    # Thumb↔Middle distance to trigger right-clic
 # Finger "up" detection: tip must be this many units above MCP
 FINGER_UP_MARGIN = 0.02
 
-# Scroll: minimum Y-delta per frame to register a scroll tick
-SCROLL_SENSITIVITY = 25     # Pixels of scroll per detected unit
-SCROLL_Y_THRESHOLD = 0.01   # Min Y-change to trigger scroll
+# Scroll: accumulate Y-delta to trigger a clean scroll tick
+SCROLL_Y_THRESHOLD = 0.035  # Accumulate 3.5% of vertical frame movement to trigger a scroll notch
+SCROLL_AMOUNT = 120         # Scroll distance per tick (120 is standard Windows WHEEL_DELTA)
 
 # ─── Cursor Smoothing (Adaptive EMA) ────────────────────
 EMA_ALPHA_MIN = 0.05        # Heavy smoothing (hand nearly still - lowered to kill jitter)
