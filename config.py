@@ -16,8 +16,8 @@ MP_TRACKING_CONFIDENCE = 0.6
 # ─── Gesture Thresholds ─────────────────────────────────
 # Pinch: Euclidean distance between thumb tip and index tip
 # (normalized coordinates, so values are 0.0 – 1.0 range)
-PINCH_THRESHOLD = 0.045          # Thumb↔Index distance to trigger click
-RIGHT_CLICK_THRESHOLD = 0.045    # Thumb↔Middle distance to trigger right-click
+PINCH_THRESHOLD = 0.025          # Thumb↔Index distance to trigger click (lowered to prevent ghost clicks)
+RIGHT_CLICK_THRESHOLD = 0.025    # Thumb↔Middle distance to trigger right-click
 
 # Finger "up" detection: tip must be this many units above MCP
 FINGER_UP_MARGIN = 0.02
@@ -27,10 +27,10 @@ SCROLL_SENSITIVITY = 25     # Pixels of scroll per detected unit
 SCROLL_Y_THRESHOLD = 0.01   # Min Y-change to trigger scroll
 
 # ─── Cursor Smoothing (Adaptive EMA) ────────────────────
-EMA_ALPHA_MIN = 0.15        # Heavy smoothing (hand nearly still)
-EMA_ALPHA_MAX = 0.70        # Light smoothing (hand moving fast)
+EMA_ALPHA_MIN = 0.05        # Heavy smoothing (hand nearly still - lowered to kill jitter)
+EMA_ALPHA_MAX = 0.50        # Light smoothing (hand moving fast)
 EMA_SPEED_THRESHOLD = 80    # Pixel delta that triggers max alpha
-DEADBAND_PIXELS = 3         # Ignore movements smaller than this
+DEADBAND_PIXELS = 5         # Ignore movements smaller than this (increased to stop drift)
 
 # ─── Mouse Control ──────────────────────────────────────
 # Screen mapping margins: shrink the effective tracking zone

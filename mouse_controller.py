@@ -81,8 +81,9 @@ class MouseController:
 
         elif gesture == Gesture.PINCH:
             # Left click (debounced)
-            sx, sy = self._smoother.smooth(screen_x, screen_y)
-            pyautogui.moveTo(int(sx), int(sy), _pause=False)
+            # We purposely DO NOT update the cursor position here.
+            # Freezing the cursor during a pinch stops it from jumping 
+            # as your index finger moves to touch your thumb!
             now = time.time()
             if now - self._last_click_time > config.CLICK_DEBOUNCE:
                 pyautogui.click(_pause=False)
@@ -90,8 +91,7 @@ class MouseController:
 
         elif gesture == Gesture.RIGHT_CLICK:
             # Right click (debounced)
-            sx, sy = self._smoother.smooth(screen_x, screen_y)
-            pyautogui.moveTo(int(sx), int(sy), _pause=False)
+            # Freeze cursor position here too
             now = time.time()
             if now - self._last_right_click_time > config.CLICK_DEBOUNCE:
                 pyautogui.rightClick(_pause=False)
