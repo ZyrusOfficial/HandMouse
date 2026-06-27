@@ -23,8 +23,19 @@ RIGHT_CLICK_THRESHOLD = 0.025    # Thumb↔Middle distance to trigger right-clic
 FINGER_UP_MARGIN = 0.02
 
 # Scroll: accumulate Y-delta to trigger a clean scroll tick
-SCROLL_Y_THRESHOLD = 0.035  # Accumulate 3.5% of vertical frame movement to trigger a scroll notch
-SCROLL_AMOUNT = 120         # Scroll distance per tick (120 is standard Windows WHEEL_DELTA)
+SCROLL_Y_THRESHOLD = 0.012  # Much lower threshold for easier scroll activation
+SCROLL_BASE_AMOUNT = 80     # Base scroll distance per tick
+SCROLL_VELOCITY_SCALE = 5000  # Multiplier: velocity → extra scroll amount
+SCROLL_MAX_AMOUNT = 600     # Cap on scroll per tick to prevent runaway
+
+# ─── Cursor Tracking ───────────────────────────────────
+# Blend weights for cursor position (fingertip vs knuckle stabilization)
+CURSOR_TIP_WEIGHT = 0.7     # Weight for index fingertip (lm[8]) — responsiveness
+CURSOR_MCP_WEIGHT = 0.3     # Weight for index MCP (lm[5]) — stability anchor
+
+# ─── Gesture Detection ──────────────────────────────────
+GESTURE_STABILITY_FRAMES = 5    # Frames to confirm a NEW gesture
+GESTURE_EXIT_FRAMES = 3         # Frames of different gesture before leaving current one
 
 # ─── Cursor Smoothing (Adaptive EMA) ────────────────────
 EMA_ALPHA_MIN = 0.05        # Heavy smoothing (hand nearly still - lowered to kill jitter)

@@ -30,6 +30,17 @@ class CursorSmoother:
         self._prev_x = None
         self._prev_y = None
 
+    def seed(self, x: float, y: float):
+        """
+        Seed the smoother with a known position without resetting.
+
+        Use this when re-entering POINT gesture after a freeze (click/scroll/idle)
+        to avoid snapping to a raw landmark position. The next smooth() call
+        will blend from this seeded position instead of jumping.
+        """
+        self._prev_x = x
+        self._prev_y = y
+
     def smooth(self, raw_x: float, raw_y: float) -> tuple[float, float]:
         """
         Apply adaptive EMA smoothing to raw screen coordinates.

@@ -60,7 +60,7 @@ def main():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAMERA_HEIGHT)
 
     tracker = HandTracker()
-    recognizer = GestureRecognizer(stability_frames=3)
+    recognizer = GestureRecognizer()
     mouse = MouseController()
     hud = OverlayHUD()
 

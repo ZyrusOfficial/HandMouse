@@ -132,14 +132,42 @@ class OverlayHUD:
 
     def _draw_finger_states(self, frame, landmarks, w: int, h: int):
         """Draw finger up/down indicators at the bottom of the frame."""
+        import math
         lm = landmarks  # Tasks API returns a direct list
-        fingers = [
-            ("THM", lm[4].x < lm[3].x),  # Thumb (mirrored)
-            ("IDX", lm[8].y < lm[6].y),   # Index
-            ("MID", lm[12].y < lm[10].y),  # Middle
-            ("RNG", lm[16].y < lm[14].y),  # Ring
-            ("PNK", lm[20].y < lm[18].y),  # Pinky
-        ]
+
+        # Use rotation-invariant detection (same logic as gesture_recognizer)
+        wrist = lm[0]
+        mid_mcp = lm[9]
+        axis_x = mid_mcp.x - wrist.x
+        axis_y = mid_mcp.y - wrist.y
+        axis_len = math.sqrt(axis_x * axis_x + axis_y * axis_y)
+
+        if axis_len < 1e-6:
+            # Fallback to Y-axis
+            fingers = [
+                ("THM", lm[4].x < lm[3].x),
+                ("IDX", lm[8].y < lm[6].y),
+                ("MID", lm[12].y < lm[10].y),
+                ("RNG", lm[16].y < lm[14].y),
+                ("PNK", lm[20].y < lm[18].y),
+            ]
+        else:
+            ax = axis_x / axis_len
+            ay = axis_y / axis_len
+            px, py = -ay, ax  # perpendicular for thumb
+
+            def proj(pt):
+                return (pt.x - wrist.x) * ax + (pt.y - wrist.y) * ay
+            def proj_perp(pt):
+                return (pt.x - wrist.x) * px + (pt.y - wrist.y) * py
+
+            fingers = [
+                ("THM", abs(proj_perp(lm[4])) > abs(proj_perp(lm[3])) + 0.01),
+                ("IDX", proj(lm[8]) > proj(lm[6])),
+                ("MID", proj(lm[12]) > proj(lm[10])),
+                ("RNG", proj(lm[16]) > proj(lm[14])),
+                ("PNK", proj(lm[20]) > proj(lm[18])),
+            ]
 
         bar_y = h - 40
         start_x = w // 2 - 120
